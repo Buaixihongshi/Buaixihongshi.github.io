@@ -46,7 +46,7 @@ jobs:
           bundler-cache: true
 
       - name: Setup webrick
-        run: bundle exec jekyll serve
+        run: bundle add webrick
       
 
       - name: Build site
