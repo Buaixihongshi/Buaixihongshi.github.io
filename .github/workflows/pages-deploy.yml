@@ -44,9 +44,6 @@ jobs:
         with:
           ruby-version: 3
           bundler-cache: true
-
-      - name: Setup webrick
-        run: bundle add webrick
       
 
       - name: Build site
