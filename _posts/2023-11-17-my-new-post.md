@@ -4,7 +4,7 @@ title: PHP 反序列化学习
 date: '2023-11-17 14:32:14 +0800'
 categories: [Web_security]
 tags: [PHP,反序列化]
-img_path: ../
+
 ---
 ## 0x00 序列化/反序列化：
 
