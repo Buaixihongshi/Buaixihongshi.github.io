@@ -34,8 +34,8 @@ github:
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: your_full_name
-  email: buaxihongshi@domain.com # change to your email address
+  name: AFK
+  email: buaixihongshi@gmail.com # change to your email address
   links:
     # The first element serves as the copyright owner's link
                                    # change to your twitter homepage
@@ -73,7 +73,7 @@ theme_mode: dark # [light|dark]
 img_cdn:
 
 # the avatar on sidebar, support local or CORS resources
-avatar:
+avatar: /images/Maomao.jpg
 
 # boolean type, the global switch for TOC in posts.
 toc: true
