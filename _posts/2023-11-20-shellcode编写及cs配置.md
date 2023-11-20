@@ -697,21 +697,21 @@ ctypes.windll.kernel32.WaitForSingleObject(ctypes.c_int(handle),ctypes.c_int(-1)
 
 <blockquote alt="warn"><p>对于不同的打包程序来说，免杀性也是不同的</p></blockquote>
 
- ### 安装：
+### 安装：
 
 使用Python3:`pip3 install pyinstaller -i https://pypi.douban.com/simple`
 
- ### 使用：
+### 使用：
 
 ```python
 pyinstaller -F test.py -w -i test.ico  #使用-w参数会增加被杀软检测到的可能性
 
--F，-onefile: 表示生成单个可执行文件，常用。
--w, -windowed, -noconsole:表示运行时不会出现黑窗控制台。
--p 表示你自己自定义需要加载的类路径，一般情况下用不到
--i 表示可执行文件的图标。注意:图片后缀必须是.ico
--c,console,-nowindowed:此为windows系统的默认选项，使用这个参数，运行时会有一个黑窗控制台。
--D，-onedir：创建一个目录，包含EXE文件，但会依赖很多文件（默认选项）
+-F,-onefile: 表示生成单个可执行文件(常用)
+-w, -windowed, -noconsole:表示运行时不会出现黑窗控制台;
+-p,表示你自己自定义需要加载的类路径, 一般情况下用不到;
+-i,表示可执行文件的图标,注意:图片后缀必须是.ico
+-c,console,-nowindowed:此为windows系统的默认选项, 使用这个参数, 运行时会有一个黑窗控制台;
+-D,-onedir:创建一个目录,包含EXE文件,但会依赖很多文件(默认选项)
 ```
 
 ### 组合测试，绕过杀软：
