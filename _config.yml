@@ -16,7 +16,7 @@ timezone:
 
 title: AFK's Blog
 
-tagline: 一个有点文艺的脚本小子罢了 # it will display as the sub-title
+tagline: 往上走 # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
   A minimal, responsive and feature-rich Jekyll theme for technical writing.
