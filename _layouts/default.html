@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="{{ site.alt_lang | default: site.lang | default: 'zh' }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#f6f3ec">
+    {% seo title=false %}
+    <title>
+      {%- unless page.layout == 'home' -%}
+        {{ page.title | append: ' | ' }}
+      {%- endunless -%}
+      {{ site.title }}
+    </title>
+    {% include_cached favicons.html %}
+    <link rel="stylesheet" href="{{ '/assets/css/personal-archive.css' | relative_url }}">
+  </head>
+  <body class="archive-site layout-{{ page.layout | default: 'default' }}">
+    {% include site-header.html %}
+    <main class="site-main" id="main-content" aria-label="Main Content">
+      {{ content }}
+    </main>
+    {% include site-footer.html %}
+  </body>
+</html>
