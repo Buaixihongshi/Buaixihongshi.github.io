@@ -1,0 +1,13 @@
+---
+layout: default
+---
+
+<article class="archive-page">
+  <header class="page-heading">
+    <p class="eyebrow">{{ page.title | default: 'Page' | upcase }}</p>
+    <h1>{{ page.title }}</h1>
+  </header>
+  <div class="content prose">
+    {{ content }}
+  </div>
+</article>
