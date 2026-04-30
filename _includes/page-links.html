@@ -1,8 +1,24 @@
 <section class="page-links" aria-label="Site sections">
-  <a class="page-link-card" href="{{ '/archives/' | relative_url }}">
-    <span class="page-link-card__number">01</span>
-    <span class="page-link-card__title">Archive</span>
-    <span class="page-link-card__text">按年份浏览留下来的文章。</span>
+  <a class="page-link-card page-link-card--archive" href="{{ '/archives/' | relative_url }}">
+    <div class="page-link-card__body">
+      <span class="page-link-card__number">01</span>
+      <span class="page-link-card__title">Archive</span>
+      <span class="page-link-card__text">按年份浏览留下来的文章。</span>
+    </div>
+    <div class="page-link-card__years">
+      {% assign years = "" %}
+      {% for post in site.posts %}
+        {% assign y = post.date | date: '%Y' %}
+        {% unless years contains y %}
+          {% if years != "" %}{% assign years = years | append: "," %}{% endif %}
+          {% assign years = years | append: y %}
+        {% endunless %}
+      {% endfor %}
+      {% assign year_list = years | split: "," %}
+      {% for y in year_list %}
+        <span class="page-link-card__year-item">{{ y }}</span>
+      {% endfor %}
+    </div>
   </a>
   <a class="page-link-card" href="{{ '/tags/' | relative_url }}">
     <span class="page-link-card__number">02</span>
