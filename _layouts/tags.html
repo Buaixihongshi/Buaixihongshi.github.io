@@ -1,0 +1,15 @@
+---
+layout: page
+---
+
+<div class="term-grid">
+  {% assign sorted_tags = site.tags | sort %}
+  {% for tag in sorted_tags %}
+    {% assign tag_name = tag[0] %}
+    {% assign tag_posts = tag[1] %}
+    <a class="term-card" href="{{ '/tags/' | append: tag_name | slugify | append: '/' | relative_url }}">
+      <span class="term-card__name">{{ tag_name }}</span>
+      <span class="term-card__count">{{ tag_posts.size }} posts</span>
+    </a>
+  {% endfor %}
+</div>

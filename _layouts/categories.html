@@ -1,0 +1,15 @@
+---
+layout: page
+---
+
+<div class="term-grid">
+  {% assign sorted_categories = site.categories | sort %}
+  {% for category in sorted_categories %}
+    {% assign category_name = category[0] %}
+    {% assign category_posts = category[1] %}
+    <a class="term-card" href="{{ '/categories/' | append: category_name | slugify | append: '/' | relative_url }}">
+      <span class="term-card__name">{{ category_name }}</span>
+      <span class="term-card__count">{{ category_posts.size }} posts</span>
+    </a>
+  {% endfor %}
+</div>

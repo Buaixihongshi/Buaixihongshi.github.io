@@ -1,0 +1,6 @@
+---
+layout: page
+---
+
+{% assign category_posts = site.categories[page.title] | default: page.posts %}
+{% include post-index.html posts=category_posts label=page.title empty_text='No posts for this category.' %}
