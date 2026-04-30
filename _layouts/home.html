@@ -1,0 +1,27 @@
+---
+layout: default
+---
+
+{% assign visible_posts = site.posts | where_exp: 'post', 'post.hidden != true' %}
+
+<section class="home-hero">
+  <p class="eyebrow">WRITING ARCHIVE</p>
+  <h1>A small archive of days.</h1>
+  <p class="home-hero__intro">
+    这里放文章、想法、复盘和一些长期留下来的记录。首页不强调单一主题，而是让内容自己形成索引。
+  </p>
+  <div class="current-index" aria-label="Current writing index">
+    <span class="current-index__label">CURRENT INDEX</span>
+    <span class="current-index__line current-index__line--muted">$ tail -f latest.log</span>
+    <span class="current-index__line current-index__line--accent">writing, learning, wandering_</span>
+  </div>
+</section>
+
+<section class="latest-posts">
+  <div class="section-label">LATEST POSTS</div>
+  <div class="section-content">
+    {% include post-index.html posts=visible_posts label='Latest posts' empty_text='No posts yet.' %}
+  </div>
+</section>
+
+{% include page-links.html %}
