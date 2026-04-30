@@ -7,7 +7,8 @@ layout: page
   {% for category in sorted_categories %}
     {% assign category_name = category[0] %}
     {% assign category_posts = category[1] %}
-    <a class="term-card" href="{{ '/categories/' | append: category_name | slugify | append: '/' | relative_url }}">
+    {% assign cat_slug = category_name | slugify %}
+    <a class="term-card" href="{{ '/categories/' | append: cat_slug | append: '/' | relative_url }}">
       <span class="term-card__name">{{ category_name }}</span>
       <span class="term-card__count">{{ category_posts.size }} posts</span>
     </a>

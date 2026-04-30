@@ -7,7 +7,8 @@ layout: page
   {% for tag in sorted_tags %}
     {% assign tag_name = tag[0] %}
     {% assign tag_posts = tag[1] %}
-    <a class="term-card" href="{{ '/tags/' | append: tag_name | slugify | append: '/' | relative_url }}">
+    {% assign tag_slug = tag_name | slugify %}
+    <a class="term-card" href="{{ '/tags/' | append: tag_slug | append: '/' | relative_url }}">
       <span class="term-card__name">{{ tag_name }}</span>
       <span class="term-card__count">{{ tag_posts.size }} posts</span>
     </a>
