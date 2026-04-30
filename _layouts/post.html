@@ -1,0 +1,50 @@
+---
+layout: default
+---
+
+<article class="post-page">
+  <header class="post-hero">
+    <p class="eyebrow">ARTICLE</p>
+    <h1>{{ page.title }}</h1>
+    <div class="post-meta">
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: '%Y.%m.%d' }}</time>
+      {% if page.categories.size > 0 %}
+        <span>{{ page.categories | join: ' / ' }}</span>
+      {% endif %}
+    </div>
+    {% if page.tags.size > 0 %}
+      <div class="tag-row" aria-label="Tags">
+        {% for tag in page.tags %}
+          <a href="{{ '/tags/' | append: tag | slugify | append: '/' | relative_url }}">{{ tag }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </header>
+
+  <div class="post-shell">
+    <div class="content prose">
+      {{ content }}
+    </div>
+    {% if page.toc %}
+      <aside class="post-toc" aria-label="Contents">
+        <div class="post-toc__title">CONTENTS</div>
+        {% include toc.html html=content %}
+      </aside>
+    {% endif %}
+  </div>
+
+  <nav class="post-nav" aria-label="Post navigation">
+    {% if page.previous %}
+      <a href="{{ page.previous.url | relative_url }}">
+        <span>PREV</span>
+        {{ page.previous.title }}
+      </a>
+    {% endif %}
+    {% if page.next %}
+      <a href="{{ page.next.url | relative_url }}">
+        <span>NEXT</span>
+        {{ page.next.title }}
+      </a>
+    {% endif %}
+  </nav>
+</article>
