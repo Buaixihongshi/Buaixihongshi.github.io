@@ -1,0 +1,20 @@
+{% assign posts = include.posts | default: site.posts %}
+{% assign empty_text = include.empty_text | default: 'No posts yet.' %}
+
+{% if posts and posts.size > 0 %}
+  <ol class="post-index" aria-label="{{ include.label | default: 'Posts' }}">
+    {% for post in posts %}
+      <li class="post-index__item">
+        <a class="post-index__link" href="{{ post.url | relative_url }}">
+          <span class="post-index__number">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+          <span class="post-index__title">{{ post.title }}</span>
+          <time class="post-index__date" datetime="{{ post.date | date_to_xmlschema }}">
+            {{ post.date | date: '%Y.%m.%d' }}
+          </time>
+        </a>
+      </li>
+    {% endfor %}
+  </ol>
+{% else %}
+  <p class="empty-state">{{ empty_text }}</p>
+{% endif %}
