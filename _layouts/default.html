@@ -13,6 +13,9 @@
     </title>
     {% include_cached favicons.html %}
     <link rel="stylesheet" href="{{ '/assets/css/personal-archive.css' | relative_url }}">
+    {% if page.layout == 'post' and site.toc and page.toc %}
+      <script src="{{ '/assets/js/personal-archive.js' | relative_url }}" defer></script>
+    {% endif %}
   </head>
   <body class="archive-site layout-{{ page.layout | default: 'default' }}">
     {% include site-header.html %}

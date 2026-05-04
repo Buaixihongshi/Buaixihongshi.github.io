@@ -29,7 +29,7 @@ layout: default
     {% if page.toc %}
       <aside class="post-toc" aria-label="Contents">
         <div class="post-toc__title">CONTENTS</div>
-        {% include toc.html html=content %}
+        <nav id="toc" class="post-toc__nav" aria-label="Contents"></nav>
       </aside>
     {% endif %}
   </div>

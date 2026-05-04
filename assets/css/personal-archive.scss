@@ -351,9 +351,31 @@ a {
   letter-spacing: .18em;
 }
 
-.post-toc ul {
-  padding-left: 16px;
-  margin: 0;
+.post-toc[hidden] {
+  display: none;
+}
+
+.post-toc__nav {
+  display: grid;
+  gap: 8px;
+}
+
+.post-toc__link {
+  display: block;
+  color: var(--archive-muted);
+  line-height: 1.55;
+}
+
+.post-toc__link:hover {
+  color: var(--archive-accent);
+}
+
+.post-toc__link--h3 {
+  padding-left: 12px;
+}
+
+.post-toc__link--h4 {
+  padding-left: 24px;
 }
 
 .post-nav {
