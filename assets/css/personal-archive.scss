@@ -10,7 +10,8 @@
   --archive-rule: #ded9cf;
   --archive-accent: #d88a2d;
   --archive-dark: #050505;
-  --archive-max: 1100px;
+  --archive-max: 1400px;
+  --archive-gutter: clamp(20px, 4vw, 80px);
   --archive-mono: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --archive-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
@@ -20,7 +21,7 @@
 }
 
 html {
-  background: #1f1f22;
+  background: var(--archive-bg);
   color: var(--archive-text);
   font-family: var(--archive-sans);
   line-height: 1.5;
@@ -42,8 +43,10 @@ a {
 .site-header,
 .site-main,
 .site-footer {
-  width: min(var(--archive-max), calc(100% - 32px));
+  width: min(var(--archive-max), 100%);
   margin: 0 auto;
+  padding-left: var(--archive-gutter);
+  padding-right: var(--archive-gutter);
   background: var(--archive-bg);
 }
 
@@ -51,25 +54,32 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 54px;
-  border: 1px solid var(--archive-line);
-  border-bottom: 0;
+  min-height: 64px;
+  margin-top: clamp(18px, 3vw, 36px);
+  border-bottom: 1px solid var(--archive-line);
   font-family: var(--archive-mono);
   font-size: 11px;
   letter-spacing: .18em;
 }
 
-.site-brand,
-.site-nav a {
+.site-brand {
   display: inline-flex;
   align-items: center;
-  min-height: 54px;
-  padding: 0 22px;
+  min-height: 44px;
+  padding-right: 22px;
 }
 
 .site-nav {
   display: flex;
   align-items: center;
+  gap: 4px;
+}
+
+.site-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
 }
 
 .site-nav a:hover,
@@ -79,16 +89,13 @@ a {
   color: var(--archive-accent);
 }
 
-.site-main {
-  border: 1px solid var(--archive-line);
-}
-
 .site-footer {
   display: flex;
   gap: 18px;
-  padding: 18px 22px 28px;
-  border: 1px solid var(--archive-line);
-  border-top: 0;
+  padding-top: 22px;
+  padding-bottom: clamp(28px, 4vw, 52px);
+  margin-bottom: clamp(18px, 3vw, 36px);
+  border-top: 1px solid var(--archive-line);
   color: var(--archive-soft);
   font-family: var(--archive-mono);
   font-size: 11px;
@@ -106,24 +113,24 @@ a {
 }
 
 .home-hero {
-  padding: clamp(48px, 8vw, 86px) clamp(28px, 5vw, 56px) clamp(36px, 6vw, 56px);
+  padding: clamp(56px, 9vw, 140px) 0 clamp(40px, 6vw, 88px);
   border-bottom: 1px solid var(--archive-line);
 }
 
 .home-hero h1,
 .page-heading h1,
 .post-hero h1 {
-  max-width: 760px;
+  max-width: 980px;
   margin: 20px 0 0;
-  font-size: clamp(42px, 7vw, 84px);
+  font-size: clamp(42px, 7.5vw, 108px);
   font-weight: 620;
   line-height: .98;
   letter-spacing: 0;
 }
 
 .home-hero__intro {
-  max-width: 620px;
-  margin: 26px 0 0;
+  max-width: 640px;
+  margin: 28px 0 0;
   color: var(--archive-muted);
   font-size: 15px;
   line-height: 1.85;
@@ -133,7 +140,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin-top: 48px;
+  margin-top: 56px;
   padding: 18px 0;
 }
 
@@ -155,13 +162,13 @@ a {
 .latest-posts,
 .archive-year {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 240px 1fr;
   border-bottom: 1px solid var(--archive-line);
 }
 
 .section-label,
 .archive-year h2 {
-  padding: 26px 22px;
+  padding: 32px 24px 32px 0;
   border-right: 1px solid var(--archive-line);
   font-weight: 400;
 }
@@ -177,8 +184,8 @@ a {
   grid-template-columns: 52px 1fr 130px;
   gap: 18px;
   align-items: center;
-  min-height: 64px;
-  padding: 0 22px;
+  min-height: 72px;
+  padding: 0 28px;
   border-bottom: 1px solid var(--archive-rule);
   font-family: var(--archive-mono);
   font-size: 13px;
@@ -206,8 +213,8 @@ a {
 
 .page-link-card,
 .term-card {
-  min-height: 170px;
-  padding: 22px;
+  min-height: 220px;
+  padding: clamp(26px, 3vw, 40px);
   border-right: 1px solid var(--archive-line);
 }
 
@@ -272,7 +279,7 @@ a {
 
 .archive-page,
 .post-page {
-  padding: clamp(34px, 5vw, 56px);
+  padding: clamp(40px, 6vw, 72px) 0;
 }
 
 .page-heading {
@@ -405,15 +412,26 @@ a {
 }
 
 @media (max-width: 820px) {
+  :root {
+    --archive-gutter: 18px;
+  }
+
   .site-header {
     align-items: flex-start;
     flex-direction: column;
+    min-height: 0;
+    padding-top: 14px;
+    padding-bottom: 14px;
   }
 
-  .site-brand,
+  .site-brand {
+    min-height: 42px;
+    padding: 0;
+  }
+
   .site-nav a {
     min-height: 42px;
-    padding: 0 16px;
+    padding: 0 12px 0 0;
   }
 
   .site-nav {
@@ -432,6 +450,7 @@ a {
 
   .section-label,
   .archive-year h2 {
+    padding: 22px 0;
     border-right: 0;
     border-bottom: 1px solid var(--archive-line);
   }
@@ -439,6 +458,7 @@ a {
   .post-index__link {
     grid-template-columns: 42px 1fr;
     min-height: 70px;
+    padding: 0 18px;
   }
 
   .post-index__date {
