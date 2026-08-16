@@ -2,6 +2,9 @@
 # the default layout is 'page'
 icon: fas fa-info-circle
 order: 4
+home_intro:
+  - 这里是 AFK 的个人博客。
+  - 这里记录文章、想法、复盘，以及一些值得长期留下来的片段。
 ---
 
 这里是 AFK 的个人博客。
