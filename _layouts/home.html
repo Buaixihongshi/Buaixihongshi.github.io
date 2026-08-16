@@ -3,24 +3,29 @@ layout: default
 ---
 
 {% assign visible_posts = site.posts | where_exp: 'post', 'post.hidden != true' %}
+{% assign about_page = nil %}
+{% for tab in site.tabs %}
+  {% if tab.url == '/about/' or tab.slug == 'about' %}
+    {% assign about_page = tab %}
+  {% endif %}
+{% endfor %}
 
-<section class="home-hero">
-  <p class="eyebrow">WRITING ARCHIVE</p>
-  <h1>A small archive of days.</h1>
-  <p class="home-hero__intro">
-    这里放文章、想法、复盘和一些长期留下来的记录。
-  </p>
-  <div class="current-index" aria-label="Current writing index">
-    <span class="current-index__line current-index__line--muted">afk@archive % tail -f latest.log</span>
-    <span class="current-index__line current-index__line--accent">writing, learning, wandering_</span>
+<section class="home-intro" aria-label="About summary">
+  <div class="home-intro__body prose">
+    {% if about_page and about_page.home_intro %}
+      {% for paragraph in about_page.home_intro %}
+        <p>{{ paragraph }}</p>
+      {% endfor %}
+    {% elsif about_page %}
+      {{ about_page.content }}
+    {% else %}
+      <p>{{ site.description }}</p>
+    {% endif %}
   </div>
+  <a class="home-intro__more" href="{{ '/about/' | relative_url }}">完整 About →</a>
 </section>
 
-<section class="latest-posts">
-  <div class="section-label">LATEST POSTS</div>
-  <div class="section-content">
-    {% include post-index.html posts=visible_posts label='Latest posts' empty_text='No posts yet.' %}
-  </div>
+<section class="latest-posts" aria-label="Latest posts">
+  <h2 class="section-label">Posts</h2>
+  {% include post-index.html posts=visible_posts label='Latest posts' empty_text='No posts yet.' %}
 </section>
-
-{% include page-links.html %}
