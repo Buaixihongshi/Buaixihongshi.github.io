@@ -434,6 +434,86 @@ a {
   padding-left: 0 !important;
 }
 
+/* 语法高亮主题（Rouge Syntax Highlighting - Python / JSON / Bash / Web） */
+.prose .highlight {
+  /* 注释 */
+  .c, .c1, .ch, .cd, .cm, .cpf, .cs {
+    color: #7a756c;
+    font-style: italic;
+  }
+  .cp {
+    color: #c9a227;
+  }
+
+  /* 关键字 (def, return, import, from, try, except, if, for, in 等) */
+  .k, .kd, .kn, .kp, .kr, .kv, .ow {
+    color: #ff7b72;
+    font-weight: 600;
+  }
+
+  /* 内置对象、伪关键字、类型 (str, int, Exception, True, False, None) */
+  .nb, .bp, .kt, .kc {
+    color: #79c0ff;
+  }
+
+  /* 函数名、方法名 (execute_bash, run_agent, append) */
+  .nf, .fm {
+    color: #d2a8ff;
+    font-weight: 500;
+  }
+
+  /* 类名、模块命名空间 (OpenAI, os, json, subprocess, sys) */
+  .nc, .nn, .no {
+    color: #ffa657;
+  }
+
+  /* 字符串与正则 ('string', "string", f"...") */
+  .s, .sa, .sb, .sc, .dl, .sd, .s2, .se, .sh, .si, .sx, .sr, .s1, .ss {
+    color: #7ee787;
+  }
+  .si {
+    color: #ffa657;
+  }
+  .sa {
+    color: #ff7b72;
+  }
+
+  /* 数值 (30, 42, 5) */
+  .m, .mb, .mf, .mh, .mi, .il, .mo, .mx {
+    color: #79c0ff;
+  }
+
+  /* 变量与属性 */
+  .nv, .vc, .vg, .vi, .vm {
+    color: #e7e2d8;
+  }
+
+  /* 标签名与属性 (JSON 键名、HTML/XML) */
+  .nt, .nl, .na {
+    color: #7ee787;
+  }
+
+  /* 运算符与标点符号 */
+  .o {
+    color: #ff7b72;
+  }
+  .p, .pi {
+    color: #c9d1d9;
+  }
+
+  /* 错误信息 */
+  .err {
+    color: #ffa198;
+    background-color: #490202;
+  }
+
+  /* 提示符 */
+  .gp {
+    color: #7a756c;
+    user-select: none;
+  }
+}
+
 /* Callout 提示框样式（支持 [!TIP], [!NOTE], [!WARNING] 等） */
 .prose blockquote.callout {
   padding: 14px 18px;
