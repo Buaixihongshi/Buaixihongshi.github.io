@@ -203,48 +203,118 @@ def run_agent(user_message, max_iterations=5):
 
 # 三、Agent 循环的运行时序（核心重点）
 
-用一张图来表示：
+整个 Agent 运转的时序与状态流转如下图所示：
 
-```plaintext
-用户任务
-  │
-  ▼
-┌──────────────────────────────────────────────────┐
-│                  Agent Loop                      │
-│                                                  │
-│  ┌─────────┐    ┌──────────┐    ┌──────────────┐ │
-│  │ 发送给  │───▶│ LLM 决策  │───▶│ 有tool_call? │ │
-│  │ LLM     │    │          │    └──────┬───────┘ │
-│  └─────────┘    └──────────┘           │         │
-│       ▲                          Yes   │   No    │
-│       │                          ┌─────┴─────┐   │
-│       │                          ▼           ▼   │
-│  ┌────┴────────┐          ┌──────────┐  返回文本  │
-│  │ 结果追加到   │◀─────────│ 执行工具  │  ──────▶│
-│  │ messages    │          └──────────┘   结束    │
-│  └─────────────┘                                 │
-└──────────────────────────────────────────────────┘
-```
+<div class="agent-runtime-diagram" style="margin: 2em 0; overflow-x: auto; text-align: center;">
+<svg viewBox="0 0 760 330" width="100%" height="auto" style="max-width: 760px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: block; margin: 0 auto;" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow-gray" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 1, 8 4, 0 7" fill="#a39e93"/>
+    </marker>
+    <marker id="arrow-gold" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 1, 8 4, 0 7" fill="#c9a227"/>
+    </marker>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 1, 8 4, 0 7" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0 1, 8 4, 0 7" fill="#4ade80"/>
+    </marker>
+  </defs>
 
-以一个具体例子来说明。假设用户运行：
+  <!-- 用户输入节点 -->
+  <rect x="15" y="45" width="130" height="58" rx="6" fill="#1e2229" stroke="#7a756c" stroke-width="1.2"/>
+  <text x="80" y="70" fill="#e7e2d8" font-size="13" font-weight="600" text-anchor="middle">用户任务输入</text>
+  <text x="80" y="88" fill="#a39e93" font-size="11" text-anchor="middle">"统计并写入..."</text>
+
+  <!-- 输入箭头 -->
+  <line x1="145" y1="74" x2="185" y2="74" stroke="#a39e93" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+  <!-- Agent Loop 循环容器 -->
+  <rect x="195" y="15" width="550" height="295" rx="8" fill="rgba(201, 162, 39, 0.03)" stroke="#c9a227" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <rect x="210" y="6" width="180" height="20" rx="4" fill="#24221a" stroke="#c9a227" stroke-width="0.8"/>
+  <text x="300" y="20" fill="#c9a227" font-size="11" font-weight="600" text-anchor="middle">Agent Loop 核心循环</text>
+
+  <!-- 节点 1：组装上下文 -->
+  <rect x="215" y="45" width="145" height="58" rx="6" fill="#222730" stroke="rgba(231,226,216,0.2)" stroke-width="1.2"/>
+  <text x="287" y="70" fill="#e7e2d8" font-size="13" font-weight="600" text-anchor="middle">① 组装上下文</text>
+  <text x="287" y="88" fill="#a39e93" font-size="11" text-anchor="middle">messages + tools</text>
+
+  <!-- 箭头 1 -> 2 -->
+  <line x1="360" y1="74" x2="385" y2="74" stroke="#a39e93" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+  <!-- 节点 2：LLM 决策 -->
+  <rect x="395" y="45" width="135" height="58" rx="6" fill="#222730" stroke="rgba(231,226,216,0.2)" stroke-width="1.2"/>
+  <text x="462" y="70" fill="#e7e2d8" font-size="13" font-weight="600" text-anchor="middle">② LLM 思考决策</text>
+  <text x="462" y="88" fill="#a39e93" font-size="11" text-anchor="middle">大模型生成响应</text>
+
+  <!-- 箭头 2 -> 3 -->
+  <line x1="530" y1="74" x2="555" y2="74" stroke="#c9a227" stroke-width="1.5" marker-end="url(#arrow-gold)"/>
+
+  <!-- 节点 3：决策分支 -->
+  <rect x="565" y="45" width="160" height="58" rx="6" fill="#2d2716" stroke="#c9a227" stroke-width="1.4"/>
+  <text x="645" y="70" fill="#fef08a" font-size="13" font-weight="600" text-anchor="middle">③ 检查响应类型</text>
+  <text x="645" y="88" fill="#d4b14e" font-size="11" text-anchor="middle">有 tool_calls 吗？</text>
+
+  <!-- 分支 No -> 任务完成退出 -->
+  <line x1="645" y1="103" x2="645" y2="175" stroke="#4ade80" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+  <rect x="653" y="128" width="80" height="18" rx="3" fill="#14261b"/>
+  <text x="693" y="141" fill="#4ade80" font-size="11" font-weight="600" text-anchor="middle">No（纯文本）</text>
+
+  <!-- 节点 4：任务完成 -->
+  <rect x="565" y="180" width="160" height="65" rx="6" fill="#14261b" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="645" y="206" fill="#4ade80" font-size="13" font-weight="600" text-anchor="middle">✔ 任务达成</text>
+  <text x="645" y="224" fill="#d1fae5" font-size="11" text-anchor="middle">返回纯文本回答</text>
+  <text x="645" y="238" fill="#6ee7b7" font-size="10" text-anchor="middle">退出 Agent 循环</text>
+
+  <!-- 分支 Yes -> 执行工具 -->
+  <path d="M 605 103 L 605 130 L 462 130 L 462 175" fill="none" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
+  <rect x="480" y="120" width="95" height="18" rx="3" fill="#112536"/>
+  <text x="527" y="133" fill="#38bdf8" font-size="11" font-weight="600" text-anchor="middle">Yes（调用工具）</text>
+
+  <!-- 节点 5：执行工具 -->
+  <rect x="390" y="180" width="145" height="65" rx="6" fill="#162330" stroke="#38bdf8" stroke-width="1.2"/>
+  <text x="462" y="206" fill="#e0f2fe" font-size="13" font-weight="600" text-anchor="middle">④ 执行工具函数</text>
+  <text x="462" y="224" fill="#93c5fd" font-size="11" text-anchor="middle">bash / read / write</text>
+  <text x="462" y="238" fill="#60a5fa" font-size="10" text-anchor="middle">捕获执行结果与异常</text>
+
+  <!-- 箭头 5 -> 6 -->
+  <line x1="390" y1="212" x2="365" y2="212" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
+
+  <!-- 节点 6：追加结果到 messages -->
+  <rect x="215" y="180" width="145" height="65" rx="6" fill="#222730" stroke="#38bdf8" stroke-width="1.2"/>
+  <text x="287" y="206" fill="#e0f2fe" font-size="13" font-weight="600" text-anchor="middle">⑤ 结果追加记忆</text>
+  <text x="287" y="224" fill="#93c5fd" font-size="11" text-anchor="middle">包装为 role: "tool"</text>
+  <text x="287" y="238" fill="#60a5fa" font-size="10" text-anchor="middle">存入 messages 数组</text>
+
+  <!-- 回环回路：6 -> 1 -->
+  <line x1="287" y1="180" x2="287" y2="110" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-cyan)"/>
+  <rect x="220" y="136" width="134" height="18" rx="3" fill="#18232e"/>
+  <text x="287" y="149" fill="#7dd3fc" font-size="10.5" font-weight="600" text-anchor="middle">带着完整历史进入下一轮</text>
+</svg>
+</div>
+
+以一个具体任务为例：
 
 ```bash
 python 01-essence/agent-essence.py \
   "统计当前目录下有多少个 Python 文件，并把结果写入 count.txt"
 ```
 
-Agent 的执行过程如下：
+Agent 在运行时的 3 轮循环流转如下：
 
 ## 第 1 轮循环
 
-**发送给 LLM 的 messages：**
+**1. 发送给 LLM 的 messages：**
+初始状态仅包含系统提示与用户任务：
 
 ```plaintext
-[system] You are a helpful assistant...
+[system] You are a helpful assistant that can interact with the system. Be concise.
 [user]   统计当前目录下有多少个 Python 文件，并把结果写入 count.txt
 ```
 
-**LLM 返回：** 不是普通文本，而是一个 tool_call：
+**2. LLM 返回：**
+模型判断需要先通过 shell 命令统计文件数量，返回 `tool_calls`：
 
 ```json
 {
@@ -257,19 +327,32 @@ Agent 的执行过程如下：
 }
 ```
 
-**代码执行：** 调用 `execute_bash("find . -name '*.py' | wc -l")`，得到结果 `"42\n"`
+**3. 代码执行：**
+代码调用 `execute_bash("find . -name '*.py' | wc -l")`，得到结果 `"42\n"`。
 
-**追加到 messages：**
+**4. 追加到 messages：**
+将执行结果包装为 `role: "tool"` 写入短期记忆：
 
 ```plaintext
 [tool] 42
 ```
 
+---
+
 ## 第 2 轮循环
 
-**发送给 LLM 的 messages：** 现在包含了完整历史（system + user + assistant 的 tool_call + tool 结果）
+**1. 发送给 LLM 的 messages：**
+包含了第 1 轮积累的完整轨迹（system + user + assistant tool_call + tool 结果）：
 
-**LLM 看到**结果是 42，决定写入文件：
+```plaintext
+[system]    You are a helpful assistant...
+[user]      统计当前目录下有多少个 Python 文件，并把结果写入 count.txt
+[assistant] tool_calls: execute_bash(command="find . -name '*.py' | wc -l")
+[tool]      42
+```
+
+**2. LLM 返回：**
+模型看到统计结果是 42，决定下一步将结果写入 `count.txt`：
 
 ```json
 {
@@ -282,17 +365,41 @@ Agent 的执行过程如下：
 }
 ```
 
-**代码执行：** 调用 `write_file("count.txt", "Python files: 42")`
+**3. 代码执行：**
+代码调用 `write_file("count.txt", "Python files: 42")`，得到结果 `"Successfully wrote to count.txt"`。
+
+**4. 追加到 messages：**
+将写入成功的反馈继续追加到对话历史中：
+
+```plaintext
+[tool] Successfully wrote to count.txt
+```
+
+---
 
 ## 第 3 轮循环
 
-**LLM 看到**文件写入成功，判断任务已完成，返回纯文本：
+**1. 发送给 LLM 的 messages：**
+此时上下文已包含完整的“思考 - 行动 - 观察”全过程：
+
+```plaintext
+[system]    You are a helpful assistant...
+[user]      统计当前目录下有多少个 Python 文件，并把结果写入 count.txt
+[assistant] tool_calls: execute_bash(...)
+[tool]      42
+[assistant] tool_calls: write_file(...)
+[tool]      Successfully wrote to count.txt
+```
+
+**2. LLM 返回：**
+模型看到文件已成功写入，确认用户的两项要求（统计 + 写入）均已完成，不再生成 `tool_calls`，直接返回纯文本回答：
 
 ```plaintext
 "已统计完成，当前目录下共有 42 个 Python 文件，结果已写入 count.txt。"
 ```
 
-`not message.tool_calls` **为 True** → 退出循环，返回结果。
+**3. 终止判断：**
+代码检测到 `not message.tool_calls` 为 `True` → 退出 Agent 循环，将最终回答输出给用户。任务圆满结束！
 
 # 四、Agent 循环里的关键设计
 
