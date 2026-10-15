@@ -320,13 +320,16 @@ a {
 .prose pre {
   max-width: 100%;
   overflow-x: auto;
-  padding: 16px;
+  padding: 14px 16px;
   border: 1px solid var(--archive-line);
+  border-radius: 6px;
   background: #12151a;
   color: var(--archive-text);
-  font-size: 14px;
+  font-size: 13.5px;
   line-height: 1.65;
-  overflow-wrap: normal;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .prose pre code {
@@ -335,6 +338,8 @@ a {
   background: transparent;
   color: inherit;
   font-size: inherit;
+  line-height: inherit;
+  white-space: inherit;
 }
 
 .prose :not(pre) > code {
@@ -342,15 +347,7 @@ a {
   border-radius: 3px;
   background: var(--archive-surface);
   font-size: .9em;
-}
-
-.prose .highlight {
-  max-width: 100%;
-  background: transparent;
-}
-
-.prose .highlight pre {
-  margin: 0;
+  overflow-wrap: break-word;
 }
 
 .prose .highlighter-rouge {
@@ -358,23 +355,159 @@ a {
   margin: 1.25em 0;
 }
 
+.prose .highlight {
+  max-width: 100%;
+  background: transparent;
+}
+
+.prose .highlight > pre {
+  margin: 0;
+  padding: 14px 16px;
+}
+
+/* Rouge 表格布局：消除内层 pre 的独立框，让行号与代码合二为一 */
 .prose .rouge-table {
   display: table;
   width: 100%;
   margin: 0;
+  border-collapse: collapse;
   font-size: inherit;
+  line-height: inherit;
 }
 
 .prose .rouge-table td {
   padding: 0;
   border: 0;
+  vertical-align: top;
+}
+
+.prose .rouge-table pre,
+.prose .rouge-gutter pre,
+.prose .rouge-code pre {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+  white-space: inherit !important;
 }
 
 .prose .rouge-gutter {
   width: 1%;
-  padding-right: 12px !important;
+  padding-right: 14px !important;
   color: var(--archive-soft);
   text-align: right;
+  white-space: pre;
+  user-select: none;
+  border-right: 1px solid var(--archive-line);
+  opacity: 0.55;
+}
+
+.prose .rouge-code {
+  padding-left: 14px !important;
+  width: 99%;
+  color: var(--archive-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 纯文本/ASCII 图表隐藏无意义的行号列 */
+.prose .language-plaintext .rouge-gutter,
+.prose .language-plain .rouge-gutter,
+.prose .language-text .rouge-gutter {
+  display: none !important;
+}
+
+.prose .language-plaintext .rouge-code,
+.prose .language-plain .rouge-code,
+.prose .language-text .rouge-code {
+  padding-left: 0 !important;
+}
+
+/* Callout 提示框样式（支持 [!TIP], [!NOTE], [!WARNING] 等） */
+.prose blockquote.callout {
+  padding: 14px 18px;
+  border-left-width: 4px;
+  border-radius: 6px;
+  margin: 1.5em 0;
+  font-size: 15px;
+  line-height: 1.75;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.prose blockquote.callout .callout__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--archive-sans);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+
+.prose blockquote.callout .callout__title svg {
+  flex-shrink: 0;
+}
+
+.prose blockquote.callout p {
+  margin: 0.6em 0;
+}
+
+.prose blockquote.callout p:first-of-type {
+  margin-top: 0;
+}
+
+.prose blockquote.callout p:last-child {
+  margin-bottom: 0;
+}
+
+.prose blockquote.callout--tip {
+  border-left-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.07);
+  color: #e0f2fe;
+}
+.prose blockquote.callout--tip .callout__title {
+  color: #38bdf8;
+}
+
+.prose blockquote.callout--note {
+  border-left-color: #94a3b8;
+  background: rgba(148, 163, 184, 0.07);
+  color: #e2e8f0;
+}
+.prose blockquote.callout--note .callout__title {
+  color: #cbd5e1;
+}
+
+.prose blockquote.callout--warning {
+  border-left-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+  color: #fef3c7;
+}
+.prose blockquote.callout--warning .callout__title {
+  color: #fbbf24;
+}
+
+.prose blockquote.callout--important {
+  border-left-color: #a855f7;
+  background: rgba(168, 85, 247, 0.08);
+  color: #f3e8ff;
+}
+.prose blockquote.callout--important .callout__title {
+  color: #c084fc;
+}
+
+.prose blockquote.callout--caution {
+  border-left-color: #f43f5e;
+  background: rgba(244, 63, 94, 0.08);
+  color: #ffe4e6;
+}
+.prose blockquote.callout--caution .callout__title {
+  color: #fb7185;
 }
 
 .post-meta,

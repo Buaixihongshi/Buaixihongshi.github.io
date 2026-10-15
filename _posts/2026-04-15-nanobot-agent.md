@@ -17,7 +17,7 @@ tags:
 
 nanoAgent 的 `agent-essence.py` 只有 100 行，但五脏俱全。整体结构可以拆成四个部分：
 
-```
+```plaintext
 ┌─────────────────────────────────────────┐
 │           1. LLM 客户端初始化             │
 ├─────────────────────────────────────────┤
@@ -60,7 +60,10 @@ tools = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "command": {"type": "string", "description": "The bash command to execute"}
+                    "command": {
+                        "type": "string",
+                        "description": "The bash command to execute"
+                    }
                 },
                 "required": ["command"]
             }
@@ -80,7 +83,8 @@ tools = [
   - `parameters`：JSON Schema 格式的属性字典。它像一本百科全书，定义了所有模型"可以"使用的参数名称、类型（string/number 等）以及对该参数的详细描述。
   - `required`：里面存放了 `properties` 中那些**绝对不能缺席**的参数键名（Key）
 
-> [!TIP] **`required` 和 `properties` 之间的关系该如何理解？**
+> [!TIP]
+> **`required` 和 `properties` 之间的关系该如何理解？**
 >
 > 你可以把这个过程想象成"填表"：
 > - `properties` 决定了表格里有哪些格子可以填（比如：姓名、电话、住址）。
@@ -107,7 +111,13 @@ nanoAgent 定义了三个工具：
 ```python
 def execute_bash(command):
     try:
-        result = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=30)
+        result = subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
         return result.stdout + result.stderr
     except Exception as e:
         return f"Error: {str(e)}"
@@ -151,7 +161,13 @@ available_functions = {
 ```python
 def run_agent(user_message, max_iterations=5):
     messages = [
-        {"role": "system", "content": "You are a helpful assistant that can interact with the system. Be concise."},
+        {
+            "role": "system",
+            "content": (
+                "You are a helpful assistant that can interact with the system. "
+                "Be concise."
+            )
+        },
         {"role": "user", "content": user_message}
     ]
 
@@ -189,7 +205,7 @@ def run_agent(user_message, max_iterations=5):
 
 用一张图来表示：
 
-```
+```plaintext
 用户任务
   │
   ▼
@@ -212,8 +228,9 @@ def run_agent(user_message, max_iterations=5):
 
 以一个具体例子来说明。假设用户运行：
 
-```python
-python 01-essence/agent-essence.py "统计当前目录下有多少个 Python 文件，并把结果写入 count.txt"
+```bash
+python 01-essence/agent-essence.py \
+  "统计当前目录下有多少个 Python 文件，并把结果写入 count.txt"
 ```
 
 Agent 的执行过程如下：
@@ -222,7 +239,7 @@ Agent 的执行过程如下：
 
 **发送给 LLM 的 messages：**
 
-```
+```plaintext
 [system] You are a helpful assistant...
 [user]   统计当前目录下有多少个 Python 文件，并把结果写入 count.txt
 ```
@@ -232,7 +249,10 @@ Agent 的执行过程如下：
 ```json
 {
   "tool_calls": [{
-    "function": {"name": "execute_bash", "arguments": "{\"command\": \"find . -name '*.py' | wc -l\"}"}
+    "function": {
+      "name": "execute_bash",
+      "arguments": "{\"command\": \"find . -name '*.py' | wc -l\"}"
+    }
   }]
 }
 ```
@@ -241,7 +261,7 @@ Agent 的执行过程如下：
 
 **追加到 messages：**
 
-```
+```plaintext
 [tool] 42
 ```
 
@@ -254,7 +274,10 @@ Agent 的执行过程如下：
 ```json
 {
   "tool_calls": [{
-    "function": {"name": "write_file", "arguments": "{\"path\": \"count.txt\", \"content\": \"Python files: 42\"}"}
+    "function": {
+      "name": "write_file",
+      "arguments": "{\"path\": \"count.txt\", \"content\": \"Python files: 42\"}"
+    }
   }]
 }
 ```
@@ -265,7 +288,7 @@ Agent 的执行过程如下：
 
 **LLM 看到**文件写入成功，判断任务已完成，返回纯文本：
 
-```
+```plaintext
 "已统计完成，当前目录下共有 42 个 Python 文件，结果已写入 count.txt。"
 ```
 
