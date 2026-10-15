@@ -9,7 +9,7 @@
     }
 
     var headings = Array.prototype.slice.call(
-      content.querySelectorAll('h2, h3, h4')
+      content.querySelectorAll('h1, h2, h3, h4')
     ).filter(function (heading) {
       return !heading.hasAttribute('data-toc-skip') && heading.textContent.trim();
     });
@@ -135,8 +135,70 @@
     });
   }
 
+  // 4. 自动美化 ASCII 架构层叠表（如 ┌───┐ ├───┤ └───┘），便于未来文章自动获得自适应矢量风格
+  function autoEnhanceAsciiTables() {
+    var pres = document.querySelectorAll('.prose pre');
+    pres.forEach(function (pre) {
+      if (pre.closest('.agent-architecture-diagram') || pre.closest('.auto-architecture-stack')) return;
+
+      var text = pre.innerText || pre.textContent;
+      if (!text) return;
+
+      // 匹配包含 ┌、├、└ 的层叠框图
+      if (text.indexOf('┌') !== -1 && text.indexOf('└') !== -1 && text.indexOf('├') !== -1) {
+        var lines = text.split('\n');
+        var items = [];
+        lines.forEach(function (line) {
+          line = line.trim();
+          if (line.startsWith('│') && line.endsWith('│')) {
+            var content = line.substring(1, line.length - 1).trim();
+            if (content && !content.match(/^[─\s]+$/)) {
+              items.push(content);
+            }
+          }
+        });
+
+        if (items.length >= 2) {
+          var container = document.createElement('div');
+          container.className = 'auto-architecture-stack';
+          container.setAttribute('style', 'margin: 1.8em 0; border: 1px solid var(--archive-line); border-radius: 8px; background: #181b21; padding: 16px; display: grid; gap: 8px;');
+
+          var colors = [
+            { bg: '#1e232d', border: 'rgba(148, 163, 184, 0.3)', text: '#f1f5f9', badge: '#94a3b8' },
+            { bg: '#152433', border: 'rgba(56, 189, 248, 0.3)', text: '#e0f2fe', badge: '#38bdf8' },
+            { bg: '#241a31', border: 'rgba(192, 132, 252, 0.3)', text: '#f3e8ff', badge: '#c084fc' },
+            { bg: '#282216', border: 'rgba(201, 162, 39, 0.4)', text: '#fef3c7', badge: '#fbbf24' }
+          ];
+
+          items.forEach(function (item, idx) {
+            var c = colors[idx % colors.length];
+            var card = document.createElement('div');
+            card.setAttribute('style', 'display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-radius: 6px; background: ' + c.bg + '; border: 1px solid ' + c.border + ';');
+
+            var badge = document.createElement('span');
+            badge.setAttribute('style', 'flex-shrink: 0; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; color: ' + c.badge + '; background: rgba(255,255,255,0.06);');
+            badge.textContent = 'Layer ' + (idx + 1);
+
+            var title = document.createElement('span');
+            title.setAttribute('style', 'font-size: 13.5px; font-weight: 600; color: ' + c.text + ';');
+            title.textContent = item;
+
+            card.appendChild(badge);
+            card.appendChild(title);
+            container.appendChild(card);
+          });
+
+          var wrapper = pre.closest('.highlighter-rouge') || pre;
+          wrapper.parentNode.insertBefore(container, wrapper);
+          wrapper.style.display = 'none';
+        }
+      }
+    });
+  }
+
   // 执行初始化
   initToc();
   initCallouts();
   initCodeBlocks();
+  autoEnhanceAsciiTables();
 })();

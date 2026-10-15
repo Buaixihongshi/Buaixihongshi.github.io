@@ -17,17 +17,57 @@ tags:
 
 nanoAgent 的 `agent-essence.py` 只有 100 行，但五脏俱全。整体结构可以拆成四个部分：
 
-```plaintext
-┌─────────────────────────────────────────┐
-│           1. LLM 客户端初始化             │
-├─────────────────────────────────────────┤
-│           2. 工具定义（Tool Schema）      │
-├─────────────────────────────────────────┤
-│           3. 工具实现（Tool Functions）   │
-├─────────────────────────────────────────┤
-│           4. Agent 循环（Core Loop）     │
-└─────────────────────────────────────────┘
-```
+<div class="agent-architecture-diagram" style="margin: 2em 0; overflow-x: auto; text-align: center;">
+<svg viewBox="0 0 740 270" width="100%" height="auto" style="max-width: 740px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: block; margin: 0 auto;" xmlns="http://www.w3.org/2000/svg">
+  <!-- 外层卡片容器 -->
+  <rect x="10" y="10" width="720" height="250" rx="8" fill="#181b21" stroke="rgba(231, 226, 216, 0.14)" stroke-width="1.2"/>
+  
+  <!-- 顶部标题栏 -->
+  <text x="32" y="34" fill="#e7e2d8" font-size="13" font-weight="600">nanoAgent 架构分层体系 (agent-essence.py)</text>
+  <rect x="585" y="21" width="125" height="18" rx="4" fill="rgba(201, 162, 39, 0.12)" stroke="#c9a227" stroke-width="0.8"/>
+  <text x="647" y="33" fill="#c9a227" font-size="10.5" font-weight="600" text-anchor="middle">100 行最小可用实现</text>
+
+  <!-- 1. LLM 客户端初始化 -->
+  <g transform="translate(30, 48)">
+    <rect x="0" y="0" width="680" height="44" rx="6" fill="#1e232d" stroke="rgba(148, 163, 184, 0.25)" stroke-width="1"/>
+    <rect x="12" y="10" width="64" height="24" rx="4" fill="rgba(148, 163, 184, 0.15)"/>
+    <text x="44" y="26" fill="#cbd5e1" font-size="11" font-weight="700" text-anchor="middle">Layer 1</text>
+    <text x="90" y="21" fill="#f1f5f9" font-size="13" font-weight="600">1. LLM 客户端初始化</text>
+    <text x="90" y="36" fill="#94a3b8" font-size="10.5">OpenAI SDK 实例构建，配置 API Key 与 Base URL，建立与 LLM 的通信通道</text>
+    <text x="660" y="27" fill="#64748b" font-size="11" text-anchor="end">OpenAI Client</text>
+  </g>
+
+  <!-- 2. 工具定义 (Tool Schema) -->
+  <g transform="translate(30, 99)">
+    <rect x="0" y="0" width="680" height="44" rx="6" fill="#152433" stroke="rgba(56, 189, 248, 0.3)" stroke-width="1"/>
+    <rect x="12" y="10" width="64" height="24" rx="4" fill="rgba(56, 189, 248, 0.15)"/>
+    <text x="44" y="26" fill="#38bdf8" font-size="11" font-weight="700" text-anchor="middle">Layer 2</text>
+    <text x="90" y="21" fill="#e0f2fe" font-size="13" font-weight="600">2. 工具定义 (Tool Schema)</text>
+    <text x="90" y="36" fill="#7dd3fc" font-size="10.5">JSON Schema 格式声明工具名、功能描述与必填入参（execute_bash, read_file, write_file）</text>
+    <text x="660" y="27" fill="#0284c7" font-size="11" text-anchor="end">Function Calling</text>
+  </g>
+
+  <!-- 3. 工具实现 (Tool Functions) -->
+  <g transform="translate(30, 150)">
+    <rect x="0" y="0" width="680" height="44" rx="6" fill="#241a31" stroke="rgba(192, 132, 252, 0.3)" stroke-width="1"/>
+    <rect x="12" y="10" width="64" height="24" rx="4" fill="rgba(192, 132, 252, 0.15)"/>
+    <text x="44" y="26" fill="#c084fc" font-size="11" font-weight="700" text-anchor="middle">Layer 3</text>
+    <text x="90" y="21" fill="#f3e8ff" font-size="13" font-weight="600">3. 工具实现与路由 (Tool Functions)</text>
+    <text x="90" y="36" fill="#d8b4fe" font-size="10.5">系统底层交互逻辑（subprocess.run、文件读写）及 available_functions 调度字典</text>
+    <text x="660" y="27" fill="#9333ea" font-size="11" text-anchor="end">Action Dispatch</text>
+  </g>
+
+  <!-- 4. Agent 核心循环 (Core Loop) -->
+  <g transform="translate(30, 201)">
+    <rect x="0" y="0" width="680" height="44" rx="6" fill="#282216" stroke="rgba(201, 162, 39, 0.4)" stroke-width="1"/>
+    <rect x="12" y="10" width="64" height="24" rx="4" fill="rgba(201, 162, 39, 0.15)"/>
+    <text x="44" y="26" fill="#fbbf24" font-size="11" font-weight="700" text-anchor="middle">Layer 4</text>
+    <text x="90" y="21" fill="#fef3c7" font-size="13" font-weight="600">4. Agent 核心循环 (Core Loop)</text>
+    <text x="90" y="36" fill="#fde68a" font-size="10.5">闭环中枢：发送对话历史 -> 解析 tool_calls -> 执行工具并追加至 messages 短期记忆</text>
+    <text x="660" y="27" fill="#d97706" font-size="11" text-anchor="end">ReAct Loop</text>
+  </g>
+</svg>
+</div>
 
 # 二、源码拆解
 
