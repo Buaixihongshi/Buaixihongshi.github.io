@@ -196,9 +196,25 @@
     });
   }
 
+  // 5. 预计阅读时长校准（精确统计中英文字符与代码量）
+  function initReadTime() {
+    var readTimeEl = document.querySelector('.post-meta .read-time');
+    var contentEl = document.querySelector('.content.prose');
+    if (!readTimeEl || !contentEl) return;
+
+    var text = contentEl.innerText || contentEl.textContent || '';
+    var cjk = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
+    var nonCjk = (text.replace(/[\u4e00-\u9fa5]/g, ' ').match(/[a-zA-Z0-9_\-]+/g) || []).length;
+    var totalWords = cjk + nonCjk;
+
+    var minutes = Math.max(1, Math.ceil(totalWords / 300));
+    readTimeEl.textContent = '预计阅读时长 ' + minutes + ' 分钟';
+  }
+
   // 执行初始化
   initToc();
   initCallouts();
   initCodeBlocks();
   autoEnhanceAsciiTables();
+  initReadTime();
 })();

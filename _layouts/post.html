@@ -10,6 +10,9 @@ layout: default
       {% if page.categories.size > 0 %}
         <span>{{ page.categories | join: ' / ' }}</span>
       {% endif %}
+      {% assign words = content | strip_html | number_of_words: 'auto' %}
+      {% assign read_time = words | divided_by: 300 | at_least: 1 %}
+      <span class="read-time">预计阅读时长 {{ read_time }} 分钟</span>
     </div>
     {% if page.tags.size > 0 %}
       <div class="tag-row" aria-label="Tags">
